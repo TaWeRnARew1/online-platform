@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оцінювання економічної безпеки — індикатор 1.10</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#162033;--muted:#64748b;--accent:#2563eb;--line:#dbe3ef;--good:#15803d;--warn:#b45309;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,#0f172a,#1e40af);color:white;padding:42px 20px}
+.wrap{max-width:1100px;margin:auto}.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.08;margin:10px 0 14px}.subtitle{max-width:850px;font-size:17px;line-height:1.6;opacity:.9}
+main{padding:28px 20px 60px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 28px rgba(15,23,42,.05);margin-bottom:20px}
+.card h2{margin:0 0 16px;font-size:21px}.muted{color:var(--muted);line-height:1.6}
+.formrow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+label{font-weight:700;font-size:14px;display:block;margin-bottom:7px}input{width:100%;padding:12px 13px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;background:white}
+input:focus{outline:3px solid #dbeafe;border-color:var(--accent)}
+button{border:0;border-radius:11px;padding:12px 18px;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+button.secondary{background:#e2e8f0;color:#0f172a}button.danger{background:#fee2e2;color:#991b1b}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.error{color:#b91c1c;font-size:13px;margin-top:5px;min-height:18px}.notice{padding:12px 14px;border-radius:10px;background:#eff6ff;color:#1e3a8a;margin-top:14px;line-height:1.5}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:left}th{background:#f8fafc}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-weight:800;font-size:12px}.critical{background:#fee2e2;color:#991b1b}.dangerous{background:#ffedd5;color:#9a3412}.unsat{background:#fef9c3;color:#854d0e}.satisfactory{background:#dcfce7;color:#166534}.optimal{background:#dbeafe;color:#1d4ed8}
+.result{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.metric{background:#f8fafc;border:1px solid var(--line);border-radius:13px;padding:16px}.metric strong{font-size:26px;display:block;margin-top:5px}
+.scale{position:relative;height:18px;border-radius:99px;overflow:hidden;background:linear-gradient(90deg,#ef4444 0 20%,#f97316 20% 40%,#eab308 40% 60%,#22c55e 60% 80%,#3b82f6 80% 100%);margin:16px 0 8px}.marker{position:absolute;top:-4px;width:4px;height:26px;background:#111827;border-radius:2px}
+.legend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+footer{max-width:1100px;margin:auto;padding:0 20px 40px;color:var(--muted);font-size:13px}
+@media(max-width:760px){.grid,.formrow{grid-template-columns:1fr}.result{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">Практичне завдання • варіант 1.10</div>
+<h1>Рентабельність операційної діяльності підприємств будівництва</h1>
+<div class="subtitle">Інтерактивна платформа для оцінювання рівня економічної безпеки України за індикатором 1.10 відповідно до Методичних рекомендацій, затверджених наказом Мінекономрозвитку №1277 від 29.10.2013.</div>
+</div></header>
+<main class="wrap">
+<div class="grid">
+<section class="card">
+<h2>1. Введення даних</h2>
+<p class="muted">Додайте один або кілька років та фактичне значення рентабельності операційної діяльності, %.</p>
+<div id="rows"></div>
+<div class="actions"><button onclick="addRow()">+ Додати рік</button><button class="secondary" onclick="loadExample()">Завантажити приклад</button><button class="danger" onclick="clearRows()">Очистити</button></div>
+<div id="formError" class="error"></div>
+<div class="notice">Захист від помилок: рік має бути цілим числом, значення — числом у %, дублікати років заборонені.</div>
+</section>
+<section class="card">
+<h2>2. Методика оцінювання</h2>
+<p class="muted"><b>Тип індикатора:</b> змішаний (тип A). У межах оптимального інтервалу 6–10% нормоване значення дорівнює 1. По обидва боки від оптимальної зони рівень безпеки зменшується.</p>
+<table><tr><th>Рівень</th><th>Ліва межа</th><th>Права межа</th></tr>
+<tr><td>Критичний</td><td>−1%</td><td>60%</td></tr>
+<tr><td>Небезпечний</td><td>3%</td><td>40%</td></tr>
+<tr><td>Незадовільний</td><td>4%</td><td>30%</td></tr>
+<tr><td>Задовільний</td><td>5%</td><td>20%</td></tr>
+<tr><td>Оптимальний</td><td>6%</td><td>10%</td></tr></table>
+<p class="muted" style="margin-top:12px">Нормування виконується лінійно між характеристичними значеннями 0; 0,2; 0,4; 0,6; 0,8; 1,0; далі симетрично за правою частиною шкали. Значення поза крайніми межами обмежуються рівнем 0.</p>
+</section>
+</div>
+
+<section class="card">
+<h2>3. Результат оцінювання</h2>
+<div id="empty" class="muted">Введіть дані вище та натисніть «Розрахувати».</div>
+<div id="results" style="display:none">
+<div class="result">
+<div class="metric">Середня рентабельність<strong id="avgRaw">—</strong><span>%</span></div>
+<div class="metric">Середній нормований рівень<strong id="avgNorm">—</strong><span>%</span></div>
+<div class="metric">Підсумковий рівень<strong id="avgLevel">—</strong></div>
+</div>
+<div class="scale"><div id="marker" class="marker"></div></div>
+<div class="legend"><span>0 — критичний</span><span>40%</span><span>60%</span><span>80%</span><span>100% — оптимальний</span></div>
+<h3>Підсумкова таблиця</h3><div style="overflow:auto"><table><thead><tr><th>Рік</th><th>Рентабельність, %</th><th>Нормований рівень</th><th>Оцінка</th></tr></thead><tbody id="tbody"></tbody></table></div>
+<h3>Автоматичний аналітичний висновок</h3><p id="conclusion" class="muted"></p>
+</div>
+</section>
+
+<section class="card">
+<h2>Пояснення</h2>
+<p class="muted"><b>Що оцінюється?</b> Рентабельність операційної діяльності підприємств будівництва — показник у відсотках, який характеризує співвідношення результату операційної діяльності та операційних витрат.</p>
+<p class="muted"><b>Джерело фактичних даних:</b> офіційна статистика Держстату — «Рентабельність операційної діяльності підприємств за видами економічної діяльності». Саме це джерело зазначене для індикатора 1.10 у Методичних рекомендаціях.</p>
+<p class="muted"><b>Методична база:</b> Наказ Міністерства економічного розвитку і торгівлі України від 29.10.2013 №1277. Документ використовується в цьому навчальному завданні як методична база, незалежно від його подальшого статусу.</p>
+</section>
+</main>
+<footer>Виконав: Калалб Дмитро Олександрович • Індикатор 1.10 • Навчальна платформа</footer>
+
+<script>
+const rows=document.getElementById('rows');
+function addRow(y='',v=''){const d=document.createElement('div');d.className='formrow';d.innerHTML=`<div><label>Рік</label><input class="year" type="number" step="1" min="1900" max="2100" value="${y}" placeholder="2024"></div><div><label>Рентабельність, %</label><input class="val" type="number" step="0.01" value="${v}" placeholder="6.5"></div>`;rows.appendChild(d)}
+function clearRows(){rows.innerHTML='';addRow();document.getElementById('results').style.display='none';document.getElementById('empty').style.display='block'}
+function loadExample(){rows.innerHTML='';[[2019,5.2],[2020,3.8],[2021,7.1],[2022,9.4],[2023,12.5],[2024,6.3]].forEach(x=>addRow(...x));calculate()}
+function score(x){
+ const p=[[-1,0],[3,.2],[4,.4],[5,.6],[6,.8],[10,1],[20,.8],[30,.6],[40,.4],[60,.2]];
+ if(x<=-1)return 0;if(x>=60)return 0;
+ for(let i=0;i<p.length-1;i++){let [x1,y1]=p[i], [x2,y2]=p[i+1];if(x>=x1&&x<=x2)return y1+(x-x1)*(y2-y1)/(x2-x1)}
+}
+function level(s){if(s<.2)return ['Критичний','critical'];if(s<.4)return ['Небезпечний','dangerous'];if(s<.6)return ['Незадовільний','unsat'];if(s<.8)return ['Задовільний','satisfactory'];return ['Оптимальний','optimal']}
+function calculate(){
+ const ys=[...document.querySelectorAll('.year')].map(x=>x.value.trim()), vs=[...document.querySelectorAll('.val')].map(x=>x.value.trim());
+ const err=document.getElementById('formError');err.textContent='';
+ if(ys.length===0){err.textContent='Додайте хоча б один рік.';return}
+ const data=[];const seen=new Set();
+ for(let i=0;i<ys.length;i++){const y=Number(ys[i]),v=Number(vs[i]);if(!Number.isInteger(y)||y<1900||y>2100){err.textContent=`Помилка у році в рядку ${i+1}.`;return}if(seen.has(y)){err.textContent=`Рік ${y} введено двічі.`;return}if(vs[i]===''||!Number.isFinite(v)){err.textContent=`Помилка у значенні рентабельності в рядку ${i+1}.`;return}seen.add(y);data.push({y,v,s:score(v)})}
+ data.sort((a,b)=>a.y-b.y);const avgRaw=data.reduce((a,b)=>a+b.v,0)/data.length,avgNorm=data.reduce((a,b)=>a+b.s,0)/data.length;
+ const [lvl,cls]=level(avgNorm);document.getElementById('avgRaw').textContent=avgRaw.toFixed(2);document.getElementById('avgNorm').textContent=(avgNorm*100).toFixed(1);document.getElementById('avgLevel').textContent=lvl;
+ document.getElementById('marker').style.left=Math.min(99,Math.max(0,avgNorm*100))+'%';
+ document.getElementById('tbody').innerHTML=data.map(d=>{let [l,c]=level(d.s);return `<tr><td>${d.y}</td><td>${d.v.toFixed(2)}</td><td>${(d.s*100).toFixed(1)}%</td><td><span class="badge ${c}">${l}</span></td></tr>`}).join('');
+ const first=data[0],last=data[data.length-1];let trend=last.v>first.v?'зросла':last.v<first.v?'знизилася':'не змінилася';
+ document.getElementById('conclusion').textContent=`За досліджуваний період середня рентабельність операційної діяльності підприємств будівництва становить ${avgRaw.toFixed(2)}%. Середній нормований рівень економічної безпеки — ${(avgNorm*100).toFixed(1)}%, що відповідає рівню «${lvl}». Від початку до кінця введеного періоду рентабельність ${trend}. Для підвищення рівня безпеки показник має наближатися до оптимального інтервалу 6–10%.`;
+ document.getElementById('empty').style.display='none';document.getElementById('results').style.display='block';
+}
+addRow();
+const b=document.createElement('div');b.className='actions';b.innerHTML='<button onclick="calculate()">Розрахувати та оцінити</button>';document.querySelector('.card').appendChild(b);
+</script>
+</body></html>
